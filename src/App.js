@@ -2,19 +2,17 @@ import React from 'react';
 import './App.css';
 import { Switch, Route } from 'react-router-dom';
 
-import Homepage from './pages/homepage/homepage-componet'
 
-const HasPage = () =>(
-    <div>
-        <h1> Hats Page</h1>
-    </div>
-);
+import Homepage from './pages/homepage/homepage-componet'
+import ShopPage from'./pages/Shop/shop-component';
+import CollectionPreview from './components/preview-components/preview-compoment'
+
 function App() {
   return (
       <div>
           <Switch>
               <Route exact path='/' component={Homepage} />
-              <Route path='/hats' component={HasPage}/>
+              <Route path='/shop' component={ShopPage}/>
 
 
           </Switch>
