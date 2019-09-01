@@ -5,24 +5,68 @@ import { Switch, Route } from 'react-router-dom';
 
 import Homepage from './pages/homepage/homepage-componet'
 import ShopPage from'./pages/Shop/shop-component';
-import CollectionPreview from './components/preview-components/preview-compoment'
+import Header from './components/header/header-component'
+import SignInSignOut from './pages/sign-in-and-sign-out/sign-in-and-sign-out'
+import {auth, createUserProfileDocument} from "./firebase/firebase-util";
 
-function App() {
-  return (
-      <div>
-          <Switch>
-              <Route exact path='/' component={Homepage} />
-              <Route path='/shop' component={ShopPage}/>
+class App extends React.Component{
+  constructor(){
+      super();
+      this.state = {
+          currentUser:null
+      }
+  }
+  unsubscribeFromAuth = null;
+
+  componentDidMount() {
+
+     this.unsubscribeFromAuth = auth.onAuthStateChanged( async userAuth=>{
+         if (userAuth) {
+             const userRef = await createUserProfileDocument(userAuth);
+
+             userRef.onSnapshot(snapshot => {
+                 this.setState({
+                         currentUser:{
+                             id:snapshot.id,
+                             ... snapshot.data()}
+                 });
+                 console.log(this.state)
+             })
+         } else {
+             this.setState({currentUser:userAuth});
+         }
+         // this.setState({currentUser:user});
+         //  console.log(user)
+      })
+  }
+
+  componentWillUnmount() {
+      this.unsubscribeFromAuth();
+  }
 
 
-          </Switch>
+
+    render() {
+      return (
+          <div>
+              <Header currentUser={this.state.currentUser}/>
+              <Switch>
+                  <Route exact path='/' component={Homepage} />
+                  <Route path='/shop' component={ShopPage}/>
+                  <Route path='/signIn' component={SignInSignOut}/>
+
+
+              </Switch>
 
 
 
 
-      </div>
+          </div>
 
-  );
+      );
+  }
+
+
 }
 
 export default App;
